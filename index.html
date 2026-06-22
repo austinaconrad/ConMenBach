@@ -47,25 +47,15 @@
     /* ─── Header ───────────────────────────────────────────── */
     header {
       width: 100%;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 18px 24px;
+      background: transparent;
+      padding: 16px 20px 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-
-    header .logo {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: var(--gold);
-    }
-
-    header .logo span { color: var(--text); font-weight: 400; }
 
     #room-badge {
       font-size: 0.78rem;
@@ -82,13 +72,41 @@
       border: 1px solid var(--border);
       color: var(--muted);
       font-size: 0.75rem;
-      padding: 4px 10px;
+      padding: 6px 14px;
       border-radius: 20px;
       cursor: pointer;
       display: none;
       transition: border-color 0.15s, color 0.15s;
     }
     #leave-btn:hover { border-color: var(--shot); color: var(--shot); }
+
+    /* ─── Hero ─────────────────────────────────────────────── */
+    .hero-section {
+      text-align: center;
+      padding: 10px 0 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-emoji { font-size: 4.5rem; line-height: 1; }
+    .hero-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      color: var(--text);
+      line-height: 1.15;
+    }
+    .hero-room {
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+    .hero-room span { color: var(--gold); font-weight: 700; }
 
     /* ─── Main wrapper ─────────────────────────────────────── */
     main {
@@ -183,115 +201,95 @@
       min-height: 18px;
     }
 
-    /* ─── Greeting ─────────────────────────────────────────── */
-    .greeting {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .greeting span { color: var(--gold); }
-
-    /* ─── Your total ───────────────────────────────────────── */
-    .your-total {
+    /* ─── Your Drinks card ─────────────────────────────────── */
+    .your-drinks-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 22px 24px;
+      overflow: hidden;
+    }
+
+    .drinks-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .your-total .label {
-      font-size: 0.78rem;
+    .drinks-header .label {
+      font-size: 0.75rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       color: var(--muted);
-      margin-bottom: 4px;
     }
 
-    .your-total .count {
-      font-size: 2.8rem;
+    .drinks-header .total-count {
+      font-size: 1.7rem;
       font-weight: 800;
       color: var(--gold);
       line-height: 1;
     }
 
-    .your-total .breakdown-mini {
+    /* tappable drink rows */
+    .drink-row {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: flex-end;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .breakdown-mini .item { display: flex; align-items: center; gap: 6px; }
-    .breakdown-mini .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* ─── Drink buttons ────────────────────────────────────── */
-    .drink-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .drink-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px 16px 18px;
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
-      transition: transform 0.12s, border-color 0.15s, background 0.15s;
+      transition: background 0.12s;
       position: relative;
       overflow: hidden;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .drink-btn:hover { transform: translateY(-2px); }
-    .drink-btn:active { transform: scale(0.96); }
+    .drink-row:last-child { border-bottom: none; }
+    .drink-row:active { background: var(--surface2); }
 
-    .drink-btn .icon { font-size: 2rem; }
-    .drink-btn .name {
-      font-size: 0.82rem;
+    .drink-row .dr-emoji { font-size: 1.4rem; flex-shrink: 0; }
+
+    .drink-row .dr-name {
+      font-size: 0.95rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
+      color: var(--text);
+      flex: 1;
     }
-    .drink-btn .tally {
-      font-size: 1.8rem;
+
+    .drink-row .dr-count {
+      font-size: 1.4rem;
       font-weight: 800;
-      line-height: 1;
+      min-width: 32px;
+      text-align: right;
     }
-    .drink-btn[data-type="beer"]   { border-color: #3a2800; }
-    .drink-btn[data-type="beer"]:hover   { border-color: var(--beer); background: #1c1400; }
-    .drink-btn[data-type="beer"] .tally { color: var(--beer); }
 
-    .drink-btn[data-type="seltzer"] { border-color: #002a38; }
-    .drink-btn[data-type="seltzer"]:hover { border-color: var(--seltzer); background: #001820; }
-    .drink-btn[data-type="seltzer"] .tally { color: var(--seltzer); }
+    .drink-row .dr-plus {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-left: 6px;
+      opacity: 0.6;
+    }
 
-    .drink-btn[data-type="mixed"]  { border-color: #230038; }
-    .drink-btn[data-type="mixed"]:hover  { border-color: var(--mixed); background: #140020; }
-    .drink-btn[data-type="mixed"] .tally { color: var(--mixed); }
+    .drink-row[data-type="beer"]    .dr-count { color: var(--beer); }
+    .drink-row[data-type="seltzer"] .dr-count { color: var(--seltzer); }
+    .drink-row[data-type="mixed"]   .dr-count { color: var(--mixed); }
+    .drink-row[data-type="shot"]    .dr-count { color: var(--shot); }
 
-    .drink-btn[data-type="shot"]   { border-color: #380000; }
-    .drink-btn[data-type="shot"]:hover   { border-color: var(--shot); background: #200000; }
-    .drink-btn[data-type="shot"] .tally  { color: var(--shot); }
+    .drink-row[data-type="beer"]:hover    { background: #1a1200; }
+    .drink-row[data-type="seltzer"]:hover { background: #001620; }
+    .drink-row[data-type="mixed"]:hover   { background: #130018; }
+    .drink-row[data-type="shot"]:hover    { background: #1e0000; }
 
     /* ripple */
-    .drink-btn .ripple {
+    .drink-row .ripple {
       position: absolute;
       border-radius: 50%;
       transform: scale(0);
       animation: ripple 0.5s linear;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
       pointer-events: none;
     }
     @keyframes ripple {
@@ -398,10 +396,9 @@
 <body>
 
 <header>
-  <div class="logo">🥃 <span>Tennessee</span> Tracker</div>
   <div style="display:flex;gap:8px;align-items:center;">
     <div id="room-badge"></div>
-    <button id="leave-btn">Leave</button>
+    <button id="leave-btn">Leave room</button>
   </div>
 </header>
 
@@ -429,44 +426,44 @@
 
   <!-- ══ TRACKER SCREEN ══ -->
   <div id="tracker-screen" class="screen">
-    <div class="greeting">Hey <span id="greeting-name"></span> 👋</div>
 
-    <!-- Your totals card -->
-    <div class="your-total">
-      <div>
-        <div class="label">Your drinks</div>
-        <div class="count" id="my-total">0</div>
-      </div>
-      <div class="breakdown-mini" id="my-breakdown">
-        <div class="item"><div class="dot" style="background:var(--beer)"></div><span id="my-beer">0 🍺</span></div>
-        <div class="item"><div class="dot" style="background:var(--seltzer)"></div><span id="my-seltzer">0 🫧</span></div>
-        <div class="item"><div class="dot" style="background:var(--mixed)"></div><span id="my-mixed">0 🍹</span></div>
-        <div class="item"><div class="dot" style="background:var(--shot)"></div><span id="my-shot">0 🥃</span></div>
-      </div>
+    <!-- Hero -->
+    <div class="hero-section">
+      <div class="hero-emoji">🍺</div>
+      <div class="hero-title">Tennessee<br>Bachelor Tracker</div>
+      <div class="hero-room">Room: <span id="hero-room-code"></span></div>
     </div>
 
-    <!-- Drink buttons -->
-    <div class="drink-grid">
-      <button class="drink-btn" data-type="beer">
-        <div class="icon">🍺</div>
-        <div class="name">Beer</div>
-        <div class="tally" id="btn-beer">0</div>
-      </button>
-      <button class="drink-btn" data-type="seltzer">
-        <div class="icon">🫧</div>
-        <div class="name">Seltzer</div>
-        <div class="tally" id="btn-seltzer">0</div>
-      </button>
-      <button class="drink-btn" data-type="mixed">
-        <div class="icon">🍹</div>
-        <div class="name">Mixed Drink</div>
-        <div class="tally" id="btn-mixed">0</div>
-      </button>
-      <button class="drink-btn" data-type="shot">
-        <div class="icon">🥃</div>
-        <div class="name">Shot</div>
-        <div class="tally" id="btn-shot">0</div>
-      </button>
+    <!-- Your Drinks card (also the tally buttons) -->
+    <div class="your-drinks-card">
+      <div class="drinks-header">
+        <div class="label">Your drinks · <span id="greeting-name"></span></div>
+        <div class="total-count" id="my-total">0</div>
+      </div>
+      <div class="drink-row" data-type="beer">
+        <div class="dr-emoji">🍺</div>
+        <div class="dr-name">Beer</div>
+        <div class="dr-count" id="my-beer">0</div>
+        <div class="dr-plus">＋</div>
+      </div>
+      <div class="drink-row" data-type="seltzer">
+        <div class="dr-emoji">🫧</div>
+        <div class="dr-name">Seltzer</div>
+        <div class="dr-count" id="my-seltzer">0</div>
+        <div class="dr-plus">＋</div>
+      </div>
+      <div class="drink-row" data-type="mixed">
+        <div class="dr-emoji">🍹</div>
+        <div class="dr-name">Mixed Drink</div>
+        <div class="dr-count" id="my-mixed">0</div>
+        <div class="dr-plus">＋</div>
+      </div>
+      <div class="drink-row" data-type="shot">
+        <div class="dr-emoji">🥃</div>
+        <div class="dr-name">Shot</div>
+        <div class="dr-count" id="my-shot">0</div>
+        <div class="dr-plus">＋</div>
+      </div>
     </div>
 
     <!-- Leaderboard -->
@@ -578,8 +575,8 @@
     joinScreen.classList.remove('active');
     trackerScreen.classList.add('active');
     document.getElementById('greeting-name').textContent = currentName;
-    roomBadge.textContent = `#${currentRoom}`;
-    roomBadge.style.display = 'block';
+    document.getElementById('hero-room-code').textContent = currentRoom;
+    roomBadge.style.display = 'none'; // room shown in hero instead
     leaveBtn.style.display = 'block';
   }
 
@@ -597,9 +594,9 @@
     joinBtn.textContent = "Let's Go 🤙";
   });
 
-  // ── Drink buttons ─────────────────────────────────────
-  document.querySelectorAll('.drink-btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
+  // ── Drink rows ────────────────────────────────────────
+  document.querySelectorAll('.drink-row').forEach(row => {
+    row.addEventListener('click', function(e) {
       if (!playerRef) return;
       const type = this.dataset.type;
 
@@ -607,7 +604,7 @@
       const ripple = document.createElement('span');
       ripple.classList.add('ripple');
       const rect = this.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
+      const size = Math.max(rect.width, rect.height) * 2;
       ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
       this.appendChild(ripple);
       setTimeout(() => ripple.remove(), 500);
@@ -637,14 +634,10 @@
     const total   = beer + seltzer + mixed + shot;
 
     document.getElementById('my-total').textContent   = total;
-    document.getElementById('my-beer').textContent    = `${beer} 🍺`;
-    document.getElementById('my-seltzer').textContent = `${seltzer} 🫧`;
-    document.getElementById('my-mixed').textContent   = `${mixed} 🍹`;
-    document.getElementById('my-shot').textContent    = `${shot} 🥃`;
-    document.getElementById('btn-beer').textContent    = beer;
-    document.getElementById('btn-seltzer').textContent = seltzer;
-    document.getElementById('btn-mixed').textContent   = mixed;
-    document.getElementById('btn-shot').textContent    = shot;
+    document.getElementById('my-beer').textContent    = beer;
+    document.getElementById('my-seltzer').textContent = seltzer;
+    document.getElementById('my-mixed').textContent   = mixed;
+    document.getElementById('my-shot').textContent    = shot;
   }
 
   // ── Update leaderboard ────────────────────────────────
