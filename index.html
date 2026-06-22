@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tennessee Bachelor Tracker 🥃</title>
 
-  <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
   <style>
-    /* ─── Reset & Base ─────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -19,7 +17,6 @@
       --surface2: #222228;
       --border:   #2e2e38;
       --gold:     #c9a44a;
-      --gold-dim: #8a6e2f;
       --text:     #f0ede8;
       --muted:    #7a7880;
       --beer:     #e8a020;
@@ -44,10 +41,9 @@
       padding: 0 0 60px;
     }
 
-    /* ─── Header ───────────────────────────────────────────── */
+    /* ─── Header ─────────────────────────────────────────── */
     header {
       width: 100%;
-      background: transparent;
       padding: 16px 20px 0;
       display: flex;
       align-items: center;
@@ -55,16 +51,6 @@
       position: sticky;
       top: 0;
       z-index: 100;
-    }
-
-    #room-badge {
-      font-size: 0.78rem;
-      color: var(--muted);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 20px;
-      display: none;
     }
 
     #leave-btn {
@@ -80,49 +66,20 @@
     }
     #leave-btn:hover { border-color: var(--shot); color: var(--shot); }
 
-    /* ─── Hero ─────────────────────────────────────────────── */
-    .hero-section {
-      text-align: center;
-      padding: 10px 0 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-    .hero-emoji { font-size: 4.5rem; line-height: 1; }
-    .hero-title {
-      font-size: 1.75rem;
-      font-weight: 900;
-      letter-spacing: 0.01em;
-      color: var(--text);
-      line-height: 1.15;
-    }
-    .hero-room {
-      font-size: 0.8rem;
-      color: var(--muted);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      padding: 5px 14px;
-      border-radius: 20px;
-      letter-spacing: 0.05em;
-    }
-    .hero-room span { color: var(--gold); font-weight: 700; }
-
-    /* ─── Main wrapper ─────────────────────────────────────── */
+    /* ─── Main ────────────────────────────────────────────── */
     main {
       width: 100%;
       max-width: 480px;
-      padding: 28px 20px 0;
+      padding: 16px 20px 0;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 16px;
     }
 
-    /* ─── Screens ──────────────────────────────────────────── */
-    .screen { display: none; flex-direction: column; gap: 20px; }
+    .screen { display: none; flex-direction: column; gap: 16px; }
     .screen.active { display: flex; }
 
-    /* ─── Join card ────────────────────────────────────────── */
+    /* ─── Join ────────────────────────────────────────────── */
     .join-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -133,36 +90,12 @@
       gap: 20px;
       text-align: center;
     }
+    .join-card .hero-emoji { font-size: 3rem; }
+    .join-card h1 { font-size: 1.4rem; font-weight: 700; color: var(--gold); letter-spacing: 0.03em; }
+    .join-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
 
-    .join-card .hero { font-size: 3rem; }
-
-    .join-card h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 0.03em;
-    }
-
-    .join-card p {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      text-align: left;
-    }
-
-    label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
+    .field-group { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+    label { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
     input[type="text"] {
       width: 100%;
@@ -194,14 +127,27 @@
     .btn-primary:hover { opacity: 0.9; }
     .btn-primary:active { transform: scale(0.98); }
 
-    .error-msg {
-      font-size: 0.82rem;
-      color: var(--shot);
-      text-align: center;
-      min-height: 18px;
-    }
+    .error-msg { font-size: 0.82rem; color: var(--shot); text-align: center; min-height: 18px; }
 
-    /* ─── Your Drinks card ─────────────────────────────────── */
+    /* ─── Hero ────────────────────────────────────────────── */
+    .hero-section {
+      text-align: center;
+      padding: 6px 0 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-emoji { font-size: 4.5rem; line-height: 1; }
+    .hero-title { font-size: 1.75rem; font-weight: 900; color: var(--text); line-height: 1.15; }
+    .hero-room {
+      font-size: 0.8rem; color: var(--muted);
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 5px 14px; border-radius: 20px; letter-spacing: 0.05em;
+    }
+    .hero-room span { color: var(--gold); font-weight: 700; }
+
+    /* ─── Your Drinks card ────────────────────────────────── */
     .your-drinks-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -210,68 +156,28 @@
     }
 
     .drinks-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 16px 20px 14px;
       border-bottom: 1px solid var(--border);
     }
+    .drinks-header .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+    .drinks-header .total-count { font-size: 1.7rem; font-weight: 800; color: var(--gold); line-height: 1; }
 
-    .drinks-header .label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-    }
-
-    .drinks-header .total-count {
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: var(--gold);
-      line-height: 1;
-    }
-
-    /* tappable drink rows */
     .drink-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: flex; align-items: center; gap: 14px;
       padding: 15px 20px;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
       transition: background 0.12s;
-      position: relative;
-      overflow: hidden;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      position: relative; overflow: hidden;
+      user-select: none; -webkit-tap-highlight-color: transparent;
     }
     .drink-row:last-child { border-bottom: none; }
     .drink-row:active { background: var(--surface2); }
-
     .drink-row .dr-emoji { font-size: 1.4rem; flex-shrink: 0; }
-
-    .drink-row .dr-name {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
-      flex: 1;
-    }
-
-    .drink-row .dr-count {
-      font-size: 1.4rem;
-      font-weight: 800;
-      min-width: 32px;
-      text-align: right;
-    }
-
-    .drink-row .dr-plus {
-      font-size: 1.2rem;
-      font-weight: 300;
-      color: var(--muted);
-      margin-left: 6px;
-      opacity: 0.6;
-    }
+    .drink-row .dr-name { font-size: 0.95rem; font-weight: 600; color: var(--text); flex: 1; }
+    .drink-row .dr-count { font-size: 1.4rem; font-weight: 800; min-width: 32px; text-align: right; }
+    .drink-row .dr-plus { font-size: 1.2rem; font-weight: 300; color: var(--muted); margin-left: 6px; opacity: 0.6; }
 
     .drink-row[data-type="beer"]    .dr-count { color: var(--beer); }
     .drink-row[data-type="seltzer"] .dr-count { color: var(--seltzer); }
@@ -283,111 +189,239 @@
     .drink-row[data-type="mixed"]:hover   { background: #130018; }
     .drink-row[data-type="shot"]:hover    { background: #1e0000; }
 
-    /* ripple */
-    .drink-row .ripple {
-      position: absolute;
-      border-radius: 50%;
-      transform: scale(0);
-      animation: ripple 0.5s linear;
-      background: rgba(255,255,255,0.06);
-      pointer-events: none;
-    }
-    @keyframes ripple {
-      to { transform: scale(4); opacity: 0; }
-    }
-
-    /* ─── Leaderboard ──────────────────────────────────────── */
-    .section-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+    /* ─── Undo bar ────────────────────────────────────────── */
+    .undo-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
       color: var(--muted);
+      animation: slideDown 0.2s ease;
     }
+    .undo-bar.visible { display: flex; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
-    .leaderboard {
+    #undo-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    #undo-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ─── Tabs ────────────────────────────────────────────── */
+    .tab-bar {
+      display: flex;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
+      padding: 4px;
+      gap: 4px;
     }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { background: var(--surface2); color: var(--gold); }
+
+    .tab-panel { display: none; flex-direction: column; gap: 12px; }
+    .tab-panel.active { display: flex; }
+
+    /* ─── Leaderboard ─────────────────────────────────────── */
+    .leaderboard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 
     .lb-row {
-      display: grid;
-      grid-template-columns: 32px 1fr auto;
-      align-items: center;
-      gap: 12px;
+      display: grid; grid-template-columns: 32px 1fr auto;
+      align-items: center; gap: 12px;
       padding: 14px 18px;
       border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
     }
     .lb-row:last-child { border-bottom: none; }
     .lb-row.me { background: rgba(201,164,74,0.07); }
 
-    .lb-rank {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-align: center;
-    }
+    .lb-rank { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-align: center; }
     .lb-row:nth-child(1) .lb-rank { color: #ffd700; font-size: 1.1rem; }
     .lb-row:nth-child(2) .lb-rank { color: #c0c0c0; }
     .lb-row:nth-child(3) .lb-rank { color: #cd7f32; }
 
     .lb-info { display: flex; flex-direction: column; gap: 4px; }
     .lb-name  { font-size: 0.95rem; font-weight: 600; }
-    .lb-breakdown {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .lb-chip {
-      font-size: 0.7rem;
-      padding: 2px 7px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
+    .lb-breakdown { display: flex; gap: 6px; flex-wrap: wrap; }
+    .lb-chip { font-size: 0.7rem; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
     .lb-chip.beer    { background: rgba(232,160,32,0.15); color: var(--beer); }
     .lb-chip.seltzer { background: rgba(56,178,216,0.15); color: var(--seltzer); }
     .lb-chip.mixed   { background: rgba(155,89,232,0.15); color: var(--mixed); }
     .lb-chip.shot    { background: rgba(232,64,64,0.15);  color: var(--shot); }
 
-    .lb-total {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--gold);
-      text-align: right;
-    }
+    .lb-total { font-size: 1.5rem; font-weight: 800; color: var(--gold); text-align: right; }
+    .lb-empty { padding: 32px; text-align: center; color: var(--muted); font-size: 0.9rem; }
 
-    .lb-empty {
-      padding: 32px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+    /* ─── Feed ────────────────────────────────────────────── */
+    .feed-list { display: flex; flex-direction: column; gap: 10px; }
 
-    /* ─── Live dot ─────────────────────────────────────────── */
-    .live-indicator {
+    .feed-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
       display: flex;
-      align-items: center;
-      gap: 6px;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .feed-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800;
+      flex-shrink: 0;
+      color: #0d0d0f;
+    }
+
+    .feed-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+
+    .feed-action {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    .feed-action .feed-name { font-weight: 700; }
+    .feed-action .feed-verb { color: var(--muted); }
+    .feed-action .feed-drink-label { font-weight: 600; }
+
+    .feed-drink-name {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .feed-drink-name::before { content: '"'; }
+    .feed-drink-name::after  { content: '"'; }
+
+    .feed-time {
       font-size: 0.75rem;
       color: var(--muted);
-      justify-content: flex-end;
-    }
-    .live-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #2ecc71;
-      box-shadow: 0 0 6px #2ecc71;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      margin-top: 2px;
     }
 
-    /* ─── Scrollbar ────────────────────────────────────────── */
+    .feed-empty { padding: 32px; text-align: center; color: var(--muted); font-size: 0.9rem; }
+
+    /* ─── Live dot ────────────────────────────────────────── */
+    .live-indicator { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); justify-content: flex-end; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; box-shadow: 0 0 6px #2ecc71; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ─── Drink name modal ────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 500;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      padding: 20px 24px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: sheetUp 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      margin: 0 auto 4px;
+    }
+
+    .modal-type-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .modal-type-emoji { font-size: 2rem; }
+    .modal-type-info { display: flex; flex-direction: column; }
+    .modal-type-label { font-size: 1.1rem; font-weight: 800; }
+    .modal-type-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    .modal-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1rem;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .modal-input::placeholder { color: var(--muted); }
+    .modal-input:focus { border-color: var(--gold); }
+
+    .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+
+    #modal-log-btn {
+      background: var(--gold);
+      color: #0d0d0f;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 15px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+    #modal-log-btn:hover { opacity: 0.9; }
+    #modal-log-btn:active { transform: scale(0.98); }
+
+    #modal-cancel-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 10px;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+    }
+    #modal-cancel-btn:hover { color: var(--text); }
+
+    /* ripple */
+    .drink-row .ripple {
+      position: absolute; border-radius: 50%;
+      transform: scale(0); animation: ripple 0.5s linear;
+      background: rgba(255,255,255,0.06); pointer-events: none;
+    }
+    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -396,17 +430,14 @@
 <body>
 
 <header>
-  <div style="display:flex;gap:8px;align-items:center;">
-    <div id="room-badge"></div>
-    <button id="leave-btn">Leave room</button>
-  </div>
+  <button id="leave-btn">Leave room</button>
 </header>
 
 <main>
   <!-- ══ JOIN SCREEN ══ -->
   <div id="join-screen" class="screen active">
     <div class="join-card">
-      <div class="hero">🍺🥃🥤</div>
+      <div class="hero-emoji">🍺🥃🥤</div>
       <h1>Bachelor Party Tracker</h1>
       <p>Enter the room code your best man shared, then throw in your name.</p>
 
@@ -434,7 +465,7 @@
       <div class="hero-room">Room: <span id="hero-room-code"></span></div>
     </div>
 
-    <!-- Your Drinks card (also the tally buttons) -->
+    <!-- Your Drinks card -->
     <div class="your-drinks-card">
       <div class="drinks-header">
         <div class="label">Your drinks · <span id="greeting-name"></span></div>
@@ -466,10 +497,30 @@
       </div>
     </div>
 
-    <!-- Leaderboard -->
-    <div class="section-title">Leaderboard</div>
-    <div class="leaderboard" id="leaderboard">
-      <div class="lb-empty">Waiting for players to join…</div>
+    <!-- Undo bar -->
+    <div class="undo-bar" id="undo-bar">
+      <span id="undo-label">Drink logged</span>
+      <button id="undo-btn">↩ Undo</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="leaderboard">🏆 Leaderboard</button>
+      <button class="tab-btn" data-tab="feed">🔥 Feed</button>
+    </div>
+
+    <!-- Leaderboard panel -->
+    <div class="tab-panel active" id="panel-leaderboard">
+      <div class="leaderboard" id="leaderboard">
+        <div class="lb-empty">Waiting for players to join…</div>
+      </div>
+    </div>
+
+    <!-- Feed panel -->
+    <div class="tab-panel" id="panel-feed">
+      <div class="feed-list" id="feed-list">
+        <div class="feed-empty">No drinks logged yet. Be the first! 🍺</div>
+      </div>
     </div>
 
     <div class="live-indicator">
@@ -478,11 +529,27 @@
   </div>
 </main>
 
+<!-- ══ DRINK NAME MODAL ══ -->
+<div class="modal-overlay" id="drink-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-type-row">
+      <div class="modal-type-emoji" id="modal-emoji"></div>
+      <div class="modal-type-info">
+        <div class="modal-type-label" id="modal-type-name"></div>
+        <div class="modal-type-sub">Tap "Log It" to add to your tally</div>
+      </div>
+    </div>
+    <input class="modal-input" type="text" id="drink-name-input" placeholder="Drink name (optional) — e.g. Bud Light" maxlength="40" autocomplete="off" />
+    <div class="modal-actions">
+      <button id="modal-log-btn">Log It 🍺</button>
+      <button id="modal-cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ═══════════════════════════════════════════════════════
-  //  🔥 FIREBASE CONFIG — paste yours from the Firebase console
-  //     (Project Settings → Your apps → SDK setup → Config)
-  // ═══════════════════════════════════════════════════════
+  // ─── Firebase Config ────────────────────────────────────
   const firebaseConfig = {
     apiKey:            "AIzaSyBdOlt5zA-CO07Aw33CgY9x17DWH50k6Tk",
     authDomain:        "bach-party-tn26.firebaseapp.com",
@@ -497,78 +564,96 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // ── State ─────────────────────────────────────────────
+  // ─── Drink metadata ─────────────────────────────────────
+  const DRINKS = {
+    beer:    { emoji: '🍺', label: 'Beer' },
+    seltzer: { emoji: '🫧', label: 'Seltzer' },
+    mixed:   { emoji: '🍹', label: 'Mixed Drink' },
+    shot:    { emoji: '🥃', label: 'Shot' },
+  };
+
+  // Avatar colors per player (assigned on first sight)
+  const AVATAR_COLORS = ['#c9a44a','#38b2d8','#9b59e8','#e84040','#2ecc71','#e8a020','#e91e8c','#00bcd4'];
+  const playerColors = {};
+  let colorIdx = 0;
+  function getColor(name) {
+    if (!playerColors[name]) playerColors[name] = AVATAR_COLORS[colorIdx++ % AVATAR_COLORS.length];
+    return playerColors[name];
+  }
+  function initials(name) {
+    return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0,2);
+  }
+
+  // ─── State ──────────────────────────────────────────────
   let currentRoom = null;
   let currentName = null;
   let playerRef   = null;
   let roomRef     = null;
-  let unsubscribe = null;
+  let feedRef     = null;
+  let pendingType = null;    // drink type waiting in modal
+  let lastEntry   = null;    // { feedId, type } for undo
+  let undoTimer   = null;
+  let unsubscribers = [];
 
-  // ── DOM refs ──────────────────────────────────────────
+  // ─── DOM ────────────────────────────────────────────────
   const joinScreen    = document.getElementById('join-screen');
   const trackerScreen = document.getElementById('tracker-screen');
   const roomInput     = document.getElementById('room-input');
   const nameInput     = document.getElementById('name-input');
   const joinBtn       = document.getElementById('join-btn');
   const joinError     = document.getElementById('join-error');
-  const roomBadge     = document.getElementById('room-badge');
   const leaveBtn      = document.getElementById('leave-btn');
+  const undoBar       = document.getElementById('undo-bar');
+  const undoLabel     = document.getElementById('undo-label');
+  const undoBtn       = document.getElementById('undo-btn');
+  const modal         = document.getElementById('drink-modal');
+  const modalEmoji    = document.getElementById('modal-emoji');
+  const modalTypeName = document.getElementById('modal-type-name');
+  const drinkNameInput= document.getElementById('drink-name-input');
+  const modalLogBtn   = document.getElementById('modal-log-btn');
+  const modalCancelBtn= document.getElementById('modal-cancel-btn');
 
-  // ── Persist session ───────────────────────────────────
+  // ─── Session restore ────────────────────────────────────
   const saved = JSON.parse(sessionStorage.getItem('bachelorSession') || 'null');
   if (saved) joinRoom(saved.room, saved.name);
 
-  // ── Join flow ─────────────────────────────────────────
+  // ─── Join flow ───────────────────────────────────────────
   joinBtn.addEventListener('click', () => {
     const room = roomInput.value.trim().toUpperCase().replace(/\s+/g,'');
     const name = nameInput.value.trim();
     joinError.textContent = '';
-
     if (!room) { joinError.textContent = 'Enter a room code.'; return; }
-    if (!name) { joinError.textContent = 'Enter your name.'; return; }
-    if (name.length < 2) { joinError.textContent = 'Name must be at least 2 characters.'; return; }
-
+    if (!name || name.length < 2) { joinError.textContent = 'Enter your name (2+ chars).'; return; }
     joinBtn.disabled = true;
     joinBtn.textContent = 'Joining…';
 
-    // Check if name already taken in this room
     db.ref(`rooms/${room}/players`).once('value').then(snap => {
       const players = snap.val() || {};
       const taken = Object.keys(players).some(k => k.toLowerCase() === name.toLowerCase() && k !== name);
       if (taken) {
-        joinError.textContent = 'That name is already taken in this room. Try a nickname.';
-        joinBtn.disabled = false;
-        joinBtn.textContent = "Let's Go 🤙";
+        joinError.textContent = 'That name is taken. Try a nickname.';
+        joinBtn.disabled = false; joinBtn.textContent = "Let's Go 🤙";
         return;
       }
-      joinRoom(room, name);
       sessionStorage.setItem('bachelorSession', JSON.stringify({ room, name }));
+      joinRoom(room, name);
     });
   });
-
-  [roomInput, nameInput].forEach(el => {
-    el.addEventListener('keydown', e => { if (e.key === 'Enter') joinBtn.click(); });
-  });
+  [roomInput, nameInput].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') joinBtn.click(); }));
 
   function joinRoom(room, name) {
-    currentRoom = room;
-    currentName = name;
+    currentRoom = room; currentName = name;
     playerRef   = db.ref(`rooms/${room}/players/${name}`);
     roomRef     = db.ref(`rooms/${room}/players`);
+    feedRef     = db.ref(`rooms/${room}/feed`);
 
-    // Ensure this player exists
-    playerRef.transaction(current => {
-      if (!current) return { beer: 0, seltzer: 0, mixed: 0, shot: 0 };
-      return current; // already exists, don't reset
-    }).then(() => {
-      showTracker();
-      subscribeRoom();
-    }).catch(err => {
-      joinError.textContent = 'Connection error. Check your Firebase config.';
-      console.error(err);
-      joinBtn.disabled = false;
-      joinBtn.textContent = "Let's Go 🤙";
-    });
+    playerRef.transaction(cur => cur || { beer:0, seltzer:0, mixed:0, shot:0 })
+      .then(() => { showTracker(); subscribeAll(); })
+      .catch(err => {
+        joinError.textContent = 'Connection error — check your Firebase config.';
+        console.error(err);
+        joinBtn.disabled = false; joinBtn.textContent = "Let's Go 🤙";
+      });
   }
 
   function showTracker() {
@@ -576,29 +661,43 @@
     trackerScreen.classList.add('active');
     document.getElementById('greeting-name').textContent = currentName;
     document.getElementById('hero-room-code').textContent = currentRoom;
-    roomBadge.style.display = 'none'; // room shown in hero instead
     leaveBtn.style.display = 'block';
   }
 
-  // ── Leave ─────────────────────────────────────────────
+  // ─── Leave ───────────────────────────────────────────────
   leaveBtn.addEventListener('click', () => {
-    if (!confirm('Leave this room? Your drink counts will still be saved.')) return;
-    if (unsubscribe) unsubscribe();
+    if (!confirm('Leave this room? Your counts stay saved.')) return;
+    unsubscribers.forEach(fn => fn()); unsubscribers = [];
     sessionStorage.removeItem('bachelorSession');
     trackerScreen.classList.remove('active');
     joinScreen.classList.add('active');
-    roomBadge.style.display = 'none';
     leaveBtn.style.display = 'none';
-    currentRoom = currentName = playerRef = roomRef = null;
-    joinBtn.disabled = false;
-    joinBtn.textContent = "Let's Go 🤙";
+    currentRoom = currentName = playerRef = roomRef = feedRef = null;
+    lastEntry = null; hideUndo();
+    joinBtn.disabled = false; joinBtn.textContent = "Let's Go 🤙";
   });
 
-  // ── Drink rows ────────────────────────────────────────
+  // ─── Tabs ────────────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById(`panel-${this.dataset.tab}`).classList.add('active');
+    });
+  });
+
+  // ─── Drink rows → open modal ─────────────────────────────
   document.querySelectorAll('.drink-row').forEach(row => {
     row.addEventListener('click', function(e) {
       if (!playerRef) return;
-      const type = this.dataset.type;
+      pendingType = this.dataset.type;
+      const d = DRINKS[pendingType];
+      modalEmoji.textContent    = d.emoji;
+      modalTypeName.textContent = d.label;
+      drinkNameInput.value = '';
+      modal.classList.add('open');
+      setTimeout(() => drinkNameInput.focus(), 300);
 
       // Ripple
       const ripple = document.createElement('span');
@@ -608,60 +707,109 @@
       ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
       this.appendChild(ripple);
       setTimeout(() => ripple.remove(), 500);
-
-      // Atomic increment
-      playerRef.child(type).transaction(val => (val || 0) + 1);
     });
   });
 
-  // ── Subscribe to room ─────────────────────────────────
-  function subscribeRoom() {
-    if (unsubscribe) unsubscribe();
-    const handler = roomRef.on('value', snap => {
+  // ─── Modal actions ───────────────────────────────────────
+  modalLogBtn.addEventListener('click', logDrink);
+  drinkNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') logDrink(); });
+  modalCancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+  function closeModal() { modal.classList.remove('open'); pendingType = null; }
+
+  function logDrink() {
+    if (!pendingType || !playerRef) return;
+    const type      = pendingType;
+    const drinkName = drinkNameInput.value.trim();
+    closeModal();
+
+    // 1. Increment count
+    playerRef.child(type).transaction(val => (val || 0) + 1);
+
+    // 2. Post to feed
+    const ref = feedRef.push({
+      player:    currentName,
+      type,
+      drinkName: drinkName || null,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    // 3. Store undo entry
+    lastEntry = { feedId: ref.key, type };
+    const d = DRINKS[type];
+    undoLabel.textContent = `Logged ${d.emoji} ${drinkName ? `"${drinkName}"` : d.label}`;
+    showUndo();
+  }
+
+  // ─── Undo ────────────────────────────────────────────────
+  undoBtn.addEventListener('click', () => {
+    if (!lastEntry || !playerRef) return;
+    playerRef.child(lastEntry.type).transaction(val => Math.max(0, (val || 0) - 1));
+    feedRef.child(lastEntry.feedId).remove();
+    lastEntry = null;
+    hideUndo();
+  });
+
+  function showUndo() {
+    undoBar.classList.add('visible');
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(hideUndo, 10000); // auto-hide after 10s
+  }
+  function hideUndo() {
+    undoBar.classList.remove('visible');
+    clearTimeout(undoTimer);
+  }
+
+  // ─── Subscriptions ───────────────────────────────────────
+  function subscribeAll() {
+    // Players → my UI + leaderboard
+    const playersHandler = roomRef.on('value', snap => {
       const players = snap.val() || {};
       updateMyUI(players[currentName] || {});
       updateLeaderboard(players);
     });
-    unsubscribe = () => roomRef.off('value', handler);
+    unsubscribers.push(() => roomRef.off('value', playersHandler));
+
+    // Feed → last 50 entries, newest first
+    const feedHandler = feedRef.limitToLast(50).on('value', snap => {
+      const items = [];
+      snap.forEach(child => items.unshift({ id: child.key, ...child.val() }));
+      renderFeed(items);
+    });
+    unsubscribers.push(() => feedRef.off('value', feedHandler));
   }
 
-  // ── Update my counts ──────────────────────────────────
+  // ─── My counts ──────────────────────────────────────────
   function updateMyUI(data) {
     const beer    = data.beer    || 0;
     const seltzer = data.seltzer || 0;
     const mixed   = data.mixed   || 0;
     const shot    = data.shot    || 0;
-    const total   = beer + seltzer + mixed + shot;
-
-    document.getElementById('my-total').textContent   = total;
+    document.getElementById('my-total').textContent   = beer + seltzer + mixed + shot;
     document.getElementById('my-beer').textContent    = beer;
     document.getElementById('my-seltzer').textContent = seltzer;
     document.getElementById('my-mixed').textContent   = mixed;
     document.getElementById('my-shot').textContent    = shot;
   }
 
-  // ── Update leaderboard ────────────────────────────────
+  // ─── Leaderboard ────────────────────────────────────────
   const RANK_ICONS = ['🥇','🥈','🥉'];
 
   function updateLeaderboard(players) {
     const lb = document.getElementById('leaderboard');
-
     const entries = Object.entries(players).map(([name, data]) => ({
       name,
       beer:    data.beer    || 0,
       seltzer: data.seltzer || 0,
       mixed:   data.mixed   || 0,
       shot:    data.shot    || 0,
-      total:   (data.beer||0) + (data.seltzer||0) + (data.mixed||0) + (data.shot||0)
-    })).sort((a, b) => b.total - a.total || a.name.localeCompare(b.name));
+      total:   (data.beer||0)+(data.seltzer||0)+(data.mixed||0)+(data.shot||0)
+    })).sort((a,b) => b.total - a.total || a.name.localeCompare(b.name));
 
-    if (!entries.length) {
-      lb.innerHTML = '<div class="lb-empty">Waiting for players to join…</div>';
-      return;
-    }
+    if (!entries.length) { lb.innerHTML = '<div class="lb-empty">Waiting for players…</div>'; return; }
 
-    lb.innerHTML = entries.map((p, i) => {
-      const rank = RANK_ICONS[i] || `${i+1}`;
+    lb.innerHTML = entries.map((p,i) => {
       const isMe = p.name === currentName;
       const chips = [
         p.beer    ? `<span class="lb-chip beer">🍺 ${p.beer}</span>` : '',
@@ -669,24 +817,75 @@
         p.mixed   ? `<span class="lb-chip mixed">🍹 ${p.mixed}</span>` : '',
         p.shot    ? `<span class="lb-chip shot">🥃 ${p.shot}</span>` : '',
       ].join('');
-      const breakdown = chips
-        ? `<div class="lb-breakdown">${chips}</div>`
-        : `<div style="font-size:0.75rem;color:var(--muted)">No drinks yet</div>`;
-
       return `
-        <div class="lb-row${isMe ? ' me' : ''}">
-          <div class="lb-rank">${rank}</div>
+        <div class="lb-row${isMe?' me':''}">
+          <div class="lb-rank">${RANK_ICONS[i]||i+1}</div>
           <div class="lb-info">
-            <div class="lb-name">${escHtml(p.name)}${isMe ? ' <span style="color:var(--muted);font-size:0.75rem;">(you)</span>' : ''}</div>
-            ${breakdown}
+            <div class="lb-name">${esc(p.name)}${isMe?' <span style="color:var(--muted);font-size:0.75rem">(you)</span>':''}</div>
+            <div class="lb-breakdown">${chips||'<span style="font-size:0.75rem;color:var(--muted)">No drinks yet</span>'}</div>
           </div>
           <div class="lb-total">${p.total}</div>
         </div>`;
     }).join('');
   }
 
-  function escHtml(str) {
-    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // ─── Feed ────────────────────────────────────────────────
+  function renderFeed(items) {
+    const list = document.getElementById('feed-list');
+    if (!items.length) {
+      list.innerHTML = '<div class="feed-empty">No drinks logged yet. Be the first! 🍺</div>';
+      return;
+    }
+    list.innerHTML = items.map(item => {
+      const d     = DRINKS[item.type] || { emoji:'🍹', label:'Drink' };
+      const color = getColor(item.player);
+      const ago   = timeAgo(item.timestamp);
+      const nameEl= `<span class="feed-drink-label" style="color:${typeColor(item.type)}">${d.emoji} ${d.label}</span>`;
+      const nameQuote = item.drinkName ? `<div class="feed-drink-name">${esc(item.drinkName)}</div>` : '';
+      return `
+        <div class="feed-item">
+          <div class="feed-avatar" style="background:${color}">${initials(item.player)}</div>
+          <div class="feed-body">
+            <div class="feed-action">
+              <span class="feed-name">${esc(item.player)}</span>
+              <span class="feed-verb"> had a </span>${nameEl}
+            </div>
+            ${nameQuote}
+            <div class="feed-time">${ago}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function typeColor(type) {
+    return { beer:'var(--beer)', seltzer:'var(--seltzer)', mixed:'var(--mixed)', shot:'var(--shot)' }[type] || 'var(--gold)';
+  }
+
+  function timeAgo(ts) {
+    if (!ts) return '';
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 5)  return 'just now';
+    if (s < 60) return `${s}s ago`;
+    const m = Math.floor(s / 60);
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    return `${Math.floor(h/24)}d ago`;
+  }
+
+  // Refresh "X ago" timestamps every 30s
+  setInterval(() => {
+    const active = document.querySelector('.tab-btn.active');
+    if (active && active.dataset.tab === 'feed') {
+      feedRef && feedRef.limitToLast(50).once('value').then(snap => {
+        const items = []; snap.forEach(c => items.unshift({ id:c.key, ...c.val() }));
+        renderFeed(items);
+      });
+    }
+  }, 30000);
+
+  function esc(str) {
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 </script>
 </body>
