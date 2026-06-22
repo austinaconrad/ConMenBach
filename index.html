@@ -885,7 +885,8 @@
 
       // ABV — stored as mass fraction (g/100g), close enough to % vol for display
       const abvRaw = n['alcohol_100g'] ?? n['alcohol'] ?? null;
-      const abv = abvRaw != null ? parseFloat(abvRaw).toFixed(1) : null;
+      const abvNum = abvRaw != null ? parseFloat(abvRaw) : null;
+      const abv = (abvNum != null && abvNum > 0) ? abvNum.toFixed(1) : null;
 
       if (calories == null && abv == null) return null;
 
