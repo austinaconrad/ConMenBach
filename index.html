@@ -664,7 +664,7 @@
   const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
   // ─── Session restore ────────────────────────────────────
-  const saved = JSON.parse(sessionStorage.getItem('bachelorSession') || 'null');
+  const saved = JSON.parse(localStorage.getItem('bachelorSession') || 'null');
   if (saved) joinRoom(saved.room, saved.name);
 
   // ─── Join flow ───────────────────────────────────────────
@@ -685,7 +685,7 @@
         joinBtn.disabled = false; joinBtn.textContent = "Let's Go 🤙";
         return;
       }
-      sessionStorage.setItem('bachelorSession', JSON.stringify({ room, name }));
+      localStorage.setItem('bachelorSession', JSON.stringify({ room, name }));
       joinRoom(room, name);
     });
   });
@@ -719,7 +719,7 @@
   leaveBtn.addEventListener('click', () => {
     if (!confirm('Leave this room? Your counts stay saved.')) return;
     unsubscribers.forEach(fn => fn()); unsubscribers = [];
-    sessionStorage.removeItem('bachelorSession');
+    localStorage.removeItem('bachelorSession');
     trackerScreen.classList.remove('active');
     joinScreen.classList.add('active');
     leaveBtn.style.display = 'none';
@@ -850,47 +850,48 @@
   async function fetchNutrition(name, type) {
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
+      const tid = setTimeout(() => controller.abort(), 7000);
 
-      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(name)}&search_simple=1&action=process&json=1&page_size=5&fields=product_name,nutriments,serving_size,serving_quantity`;
-      const res  = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeout);
+      // v2 API is more reliable than the old CGI search endpoint
+      const url = `https://world.openfoodfacts.org/api/v2/search?q=${encodeURIComponent(name)}&page_size=5&fields=product_name,nutriments,serving_size,serving_quantity`;
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(tid);
 
       if (!res.ok) return null;
       const data = await res.json();
-      if (!data.products?.length) return null;
+      const products = data.products || [];
+      if (!products.length) return null;
 
-      // Pick the first product that has calorie data; fall back to first result
-      const product = data.products.find(p => p.nutriments?.['energy-kcal_100g'] != null)
-                   || data.products[0];
+      // Prefer a product that actually has calorie data
+      const product = products.find(p => {
+        const n = p.nutriments || {};
+        return n['energy-kcal_100g'] != null || n['energy-kcal_serving'] != null;
+      }) || products[0];
       if (!product) return null;
 
-      const n       = product.nutriments || {};
-      const cal100  = n['energy-kcal_100g'];   // kcal per 100 ml
-      const abv100  = n['alcohol_100g'];        // % by weight ≈ ABV for display
+      const n = product.nutriments || {};
 
-      // Calories: prefer per-serving value, otherwise estimate from serving size
+      // Calorie extraction — try several field name variants OFF uses
+      const cal100    = n['energy-kcal_100g'] ?? n['energy-kcal'] ?? null;
+      const calServing = n['energy-kcal_serving'] ?? null;
+
       let calories = null;
-      if (n['energy-kcal_serving'] != null) {
-        calories = Math.round(n['energy-kcal_serving']);
+      if (calServing != null) {
+        calories = Math.round(calServing);
       } else if (cal100 != null) {
-        // Try to parse a numeric serving quantity from the product, fall back to type default
         const servQty = parseFloat(product.serving_quantity) || SERVING_ML[type] || 355;
         calories = Math.round(cal100 * (servQty / 100));
       }
 
-      const abv = abv100 != null ? parseFloat(abv100).toFixed(1) : null;
+      // ABV — stored as mass fraction (g/100g), close enough to % vol for display
+      const abvRaw = n['alcohol_100g'] ?? n['alcohol'] ?? null;
+      const abv = abvRaw != null ? parseFloat(abvRaw).toFixed(1) : null;
 
-      // Only return something useful if we got at least one data point
       if (calories == null && abv == null) return null;
 
-      return {
-        calories,
-        abv,
-        servingSize: product.serving_size || null,
-      };
+      return { calories, abv, servingSize: product.serving_size || null };
     } catch (e) {
-      // Timeout or network error — fail silently
+      // Timeout or network error — post goes through without nutrition chip
       return null;
     }
   }
@@ -924,13 +925,20 @@
     });
     unsubscribers.push(() => roomRef.off('value', playersHandler));
 
-    // Feed → last 50 entries, newest first
-    const feedHandler = feedRef.limitToLast(50).on('value', snap => {
+    // Feed — store query ref so we call .off() on the exact same object
+    const feedQuery = feedRef.orderByKey().limitToLast(50);
+    const feedHandler = feedQuery.on('value', snap => {
       const items = [];
-      snap.forEach(child => items.unshift({ id: child.key, ...child.val() }));
+      snap.forEach(child => {
+        const v = child.val();
+        if (v && v.player && v.type) {           // skip any malformed entries
+          items.push({ id: child.key, ...v });
+        }
+      });
+      items.reverse();                            // newest first
       renderFeed(items);
-    });
-    unsubscribers.push(() => feedRef.off('value', feedHandler));
+    }, err => console.error('Feed error:', err));
+    unsubscribers.push(() => feedQuery.off('value', feedHandler));
   }
 
   // ─── My counts ──────────────────────────────────────────
