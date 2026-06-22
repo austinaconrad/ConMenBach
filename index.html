@@ -844,61 +844,72 @@
     // 3. Store undo entry
     lastEntry = { feedId: ref.key, type };
     const d = DRINKS[type];
-    undoLabel.textContent = `Logged ${d.emoji} ${drinkName ? `"${drinkName}"` : d.label}`;
+    const nutritionSummary = nutrition
+      ? ' · ' + [
+          nutrition.calories != null ? `${nutrition.calories} cal` : null,
+          nutrition.abv      != null ? `${nutrition.abv}% ABV`    : null
+        ].filter(Boolean).join(', ')
+      : '';
+    undoLabel.textContent = `Logged ${d.emoji} ${drinkName ? `"${drinkName}"` : d.label}${nutritionSummary}`;
     showUndo();
   }
 
   // ─── Open Food Facts lookup ──────────────────────────
-  // Default serving sizes (ml) per drink type for calorie math
   const SERVING_ML = { beer: 355, seltzer: 355, mixed: 240, shot: 44 };
 
   async function fetchNutrition(name, type) {
-    try {
-      const controller = new AbortController();
-      const tid = setTimeout(() => controller.abort(), 7000);
+    // Try CGI endpoint first (richer ABV data), fall back to v2 if it fails
+    const urls = [
+      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(name)}&search_simple=1&action=process&json=1&page_size=3`,
+      `https://world.openfoodfacts.org/api/v2/search?q=${encodeURIComponent(name)}&page_size=3`
+    ];
 
-      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(name)}&search_simple=1&action=process&json=1&page_size=5&fields=product_name,nutriments,serving_size,serving_quantity`;
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(tid);
+    for (const url of urls) {
+      try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 6000);
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(tid);
+        if (!res.ok) continue;
 
-      if (!res.ok) return null;
-      const data = await res.json();
-      const products = data.products || [];
-      if (!products.length) return null;
+        const data = await res.json();
+        const products = data.products || [];
+        if (!products.length) continue;
 
-      // Prefer a product that actually has calorie data
-      const product = products.find(p => {
-        const n = p.nutriments || {};
-        return n['energy-kcal_100g'] != null || n['energy-kcal_serving'] != null;
-      }) || products[0];
-      if (!product) return null;
+        // Prefer a product that has calorie data
+        const product = products.find(p => {
+          const n = p.nutriments || {};
+          return n['energy-kcal_100g'] != null || n['energy-kcal_serving'] != null;
+        }) || products[0];
+        if (!product) continue;
 
-      const n = product.nutriments || {};
+        const n = product.nutriments || {};
 
-      // Calorie extraction — try several field name variants OFF uses
-      const cal100    = n['energy-kcal_100g'] ?? n['energy-kcal'] ?? null;
-      const calServing = n['energy-kcal_serving'] ?? null;
+        // Calories — try per-serving first, then calculate from per-100g
+        const cal100     = n['energy-kcal_100g'] ?? n['energy-kcal'] ?? null;
+        const calServing = n['energy-kcal_serving'] ?? null;
+        let calories = null;
+        if (calServing != null) {
+          calories = Math.round(calServing);
+        } else if (cal100 != null) {
+          const servQty = parseFloat(product.serving_quantity) || SERVING_ML[type] || 355;
+          calories = Math.round(cal100 * (servQty / 100));
+        }
 
-      let calories = null;
-      if (calServing != null) {
-        calories = Math.round(calServing);
-      } else if (cal100 != null) {
-        const servQty = parseFloat(product.serving_quantity) || SERVING_ML[type] || 355;
-        calories = Math.round(cal100 * (servQty / 100));
+        // ABV — g per 100g ≈ % by volume for display purposes
+        const abvRaw = n['alcohol_100g'] ?? n['alcohol'] ?? null;
+        const abvNum = abvRaw != null ? parseFloat(abvRaw) : null;
+        const abv    = (abvNum != null && abvNum > 0) ? abvNum.toFixed(1) : null;
+
+        if (calories != null || abv != null) {
+          return { calories, abv, servingSize: product.serving_size || null };
+        }
+        // This endpoint had products but no nutrition data — try the next URL
+      } catch (e) {
+        // Timeout or CORS error — try next URL
       }
-
-      // ABV — stored as mass fraction (g/100g), close enough to % vol for display
-      const abvRaw = n['alcohol_100g'] ?? n['alcohol'] ?? null;
-      const abvNum = abvRaw != null ? parseFloat(abvRaw) : null;
-      const abv = (abvNum != null && abvNum > 0) ? abvNum.toFixed(1) : null;
-
-      if (calories == null && abv == null) return null;
-
-      return { calories, abv, servingSize: product.serving_size || null };
-    } catch (e) {
-      // Timeout or network error — post goes through without nutrition chip
-      return null;
     }
+    return null;
   }
 
   // ─── Undo ────────────────────────────────────────────────
