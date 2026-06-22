@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ConMen Tracker 🥃</title>
+  <title>Tennessee Bachelor Tracker 🥃</title>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -12,17 +12,17 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0d0d0f;
-      --surface:  #18181c;
-      --surface2: #222228;
-      --border:   #2e2e38;
-      --gold:     #c9a44a;
-      --text:     #f0ede8;
-      --muted:    #7a7880;
-      --beer:     #e8a020;
-      --seltzer:  #38b2d8;
-      --mixed:    #9b59e8;
-      --shot:     #e84040;
+      --bg:       #f0f6ff;
+      --surface:  #ffffff;
+      --surface2: #e4f0fb;
+      --border:   #a8d4f0;
+      --accent:   #1a9fd6;
+      --text:     #0f2030;
+      --muted:    #6b8faf;
+      --beer:     #c87800;
+      --seltzer:  #0e8ab5;
+      --mixed:    #7a3ec8;
+      --shot:     #d42020;
       --radius:   14px;
     }
 
@@ -111,7 +111,7 @@
       text-align: center;
     }
     .join-card .hero-emoji { font-size: 3rem; }
-    .join-card h1 { font-size: 1.4rem; font-weight: 700; color: var(--gold); letter-spacing: 0.03em; }
+    .join-card h1 { font-size: 1.4rem; font-weight: 700; color: var(--accent); letter-spacing: 0.03em; }
     .join-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
 
     .field-group { display: flex; flex-direction: column; gap: 10px; text-align: left; }
@@ -129,12 +129,12 @@
       transition: border-color 0.2s;
     }
     input[type="text"]::placeholder { color: var(--muted); }
-    input[type="text"]:focus { border-color: var(--gold); }
+    input[type="text"]:focus { border-color: var(--accent); }
 
     .btn-primary {
       width: 100%;
-      background: var(--gold);
-      color: #0d0d0f;
+      background: var(--accent);
+      color: #ffffff;
       border: none;
       border-radius: 12px;
       font-size: 1rem;
@@ -165,7 +165,7 @@
       background: var(--surface2); border: 1px solid var(--border);
       padding: 5px 14px; border-radius: 20px; letter-spacing: 0.05em;
     }
-    .hero-room span { color: var(--gold); font-weight: 700; }
+    .hero-room span { color: var(--accent); font-weight: 700; }
 
     /* ─── Your Drinks card ────────────────────────────────── */
     .your-drinks-card {
@@ -181,7 +181,7 @@
       border-bottom: 1px solid var(--border);
     }
     .drinks-header .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-    .drinks-header .total-count { font-size: 1.7rem; font-weight: 800; color: var(--gold); line-height: 1; }
+    .drinks-header .total-count { font-size: 1.7rem; font-weight: 800; color: var(--accent); line-height: 1; }
 
     .drink-row {
       display: flex; align-items: center; gap: 14px;
@@ -204,10 +204,10 @@
     .drink-row[data-type="mixed"]   .dr-count { color: var(--mixed); }
     .drink-row[data-type="shot"]    .dr-count { color: var(--shot); }
 
-    .drink-row[data-type="beer"]:hover    { background: #1a1200; }
-    .drink-row[data-type="seltzer"]:hover { background: #001620; }
-    .drink-row[data-type="mixed"]:hover   { background: #130018; }
-    .drink-row[data-type="shot"]:hover    { background: #1e0000; }
+    .drink-row[data-type="beer"]:hover    { background: #fff4e0; }
+    .drink-row[data-type="seltzer"]:hover { background: #e0f4ff; }
+    .drink-row[data-type="mixed"]:hover   { background: #f2e8ff; }
+    .drink-row[data-type="shot"]:hover    { background: #ffe8e8; }
 
     /* ─── Undo bar ────────────────────────────────────────── */
     .undo-bar {
@@ -236,7 +236,7 @@
       cursor: pointer;
       transition: border-color 0.15s;
     }
-    #undo-btn:hover { border-color: var(--gold); color: var(--gold); }
+    #undo-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ─── Tabs ────────────────────────────────────────────── */
     .tab-bar {
@@ -264,7 +264,7 @@
       gap: 6px;
     }
     .tab-btn:hover { color: var(--text); }
-    .tab-btn.active { background: var(--surface2); color: var(--gold); }
+    .tab-btn.active { background: var(--surface2); color: var(--accent); }
 
     .tab-panel { display: none; flex-direction: column; gap: 12px; }
     .tab-panel.active { display: flex; }
@@ -279,12 +279,12 @@
       border-bottom: 1px solid var(--border);
     }
     .lb-row:last-child { border-bottom: none; }
-    .lb-row.me { background: rgba(201,164,74,0.07); }
+    .lb-row.me { background: rgba(26,159,214,0.08); }
 
     .lb-rank { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-align: center; }
-    .lb-row:nth-child(1) .lb-rank { color: #ffd700; font-size: 1.1rem; }
-    .lb-row:nth-child(2) .lb-rank { color: #c0c0c0; }
-    .lb-row:nth-child(3) .lb-rank { color: #cd7f32; }
+    .lb-row:nth-child(1) .lb-rank { color: #d4a000; font-size: 1.1rem; }
+    .lb-row:nth-child(2) .lb-rank { color: #7a9ab0; }
+    .lb-row:nth-child(3) .lb-rank { color: #b07040; }
 
     .lb-info { display: flex; flex-direction: column; gap: 4px; }
     .lb-name  { font-size: 0.95rem; font-weight: 600; }
@@ -295,7 +295,7 @@
     .lb-chip.mixed   { background: rgba(155,89,232,0.15); color: var(--mixed); }
     .lb-chip.shot    { background: rgba(232,64,64,0.15);  color: var(--shot); }
 
-    .lb-total { font-size: 1.5rem; font-weight: 800; color: var(--gold); text-align: right; }
+    .lb-total { font-size: 1.5rem; font-weight: 800; color: var(--accent); text-align: right; }
     .lb-empty { padding: 32px; text-align: center; color: var(--muted); font-size: 0.9rem; }
 
     /* ─── Feed ────────────────────────────────────────────── */
@@ -316,7 +316,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 0.8rem; font-weight: 800;
       flex-shrink: 0;
-      color: #0d0d0f;
+      color: #ffffff;
     }
 
     .feed-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -414,13 +414,13 @@
       width: 100%;
     }
     .modal-input::placeholder { color: var(--muted); }
-    .modal-input:focus { border-color: var(--gold); }
+    .modal-input:focus { border-color: var(--accent); }
 
     .modal-actions { display: flex; flex-direction: column; gap: 8px; }
 
     #modal-log-btn {
-      background: var(--gold);
-      color: #0d0d0f;
+      background: var(--accent);
+      color: #ffffff;
       border: none;
       border-radius: 12px;
       font-size: 1rem;
@@ -462,11 +462,16 @@
     }
     #modal-cancel-btn:hover { color: var(--text); }
 
+    /* card shadow for depth on light bg */
+    .your-drinks-card, .leaderboard, .feed-item, .join-card, .tab-bar {
+      box-shadow: 0 1px 4px rgba(0,80,160,0.07);
+    }
+
     /* ripple */
     .drink-row .ripple {
       position: absolute; border-radius: 50%;
       transform: scale(0); animation: ripple 0.5s linear;
-      background: rgba(255,255,255,0.06); pointer-events: none;
+      background: rgba(26,159,214,0.08); pointer-events: none;
     }
     @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
@@ -510,7 +515,7 @@
     <!-- Hero -->
     <div class="hero-section">
       <div class="hero-emoji">🍺</div>
-      <div class="hero-title">Tennessee<br>Bachelor Tracker</div>
+      <div class="hero-title">ConMen Tracker</div>
       <div class="hero-room">Room: <span id="hero-room-code"></span></div>
     </div>
 
@@ -852,8 +857,7 @@
       const controller = new AbortController();
       const tid = setTimeout(() => controller.abort(), 7000);
 
-      // v2 API is more reliable than the old CGI search endpoint
-      const url = `https://world.openfoodfacts.org/api/v2/search?q=${encodeURIComponent(name)}&page_size=5&fields=product_name,nutriments,serving_size,serving_quantity`;
+      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(name)}&search_simple=1&action=process&json=1&page_size=5&fields=product_name,nutriments,serving_size,serving_quantity`;
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(tid);
 
@@ -1034,7 +1038,7 @@
   }
 
   function typeColor(type) {
-    return { beer:'var(--beer)', seltzer:'var(--seltzer)', mixed:'var(--mixed)', shot:'var(--shot)' }[type] || 'var(--gold)';
+    return { beer:'var(--beer)', seltzer:'var(--seltzer)', mixed:'var(--mixed)', shot:'var(--shot)' }[type] || 'var(--accent)';
   }
 
   function timeAgo(ts) {
