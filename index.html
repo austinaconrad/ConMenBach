@@ -47,10 +47,30 @@
       padding: 16px 20px 0;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
+    }
+
+    #live-pill {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+    #live-pill.visible { display: flex; }
+    #live-pill .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #2ecc71;
+      box-shadow: 0 0 6px #2ecc71;
+      animation: pulse 2s infinite;
     }
 
     #leave-btn {
@@ -323,11 +343,22 @@
       margin-top: 2px;
     }
 
+    .feed-nutrition {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 10px;
+      margin-top: 1px;
+    }
+    .feed-nutrition-dot { opacity: 0.35; }
+
     .feed-empty { padding: 32px; text-align: center; color: var(--muted); font-size: 0.9rem; }
 
-    /* ─── Live dot ────────────────────────────────────────── */
-    .live-indicator { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); justify-content: flex-end; }
-    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; box-shadow: 0 0 6px #2ecc71; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
     /* ─── Drink name modal ────────────────────────────────── */
@@ -402,6 +433,23 @@
     #modal-log-btn:hover { opacity: 0.9; }
     #modal-log-btn:active { transform: scale(0.98); }
 
+    #modal-remove-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+      transition: border-color 0.15s, color 0.15s;
+      display: none;
+    }
+    #modal-remove-btn.visible { display: block; }
+    #modal-remove-btn:hover { border-color: var(--shot); color: var(--shot); }
+
     #modal-cancel-btn {
       background: none;
       border: none;
@@ -430,6 +478,7 @@
 <body>
 
 <header>
+  <div id="live-pill"><div class="live-dot"></div>Live</div>
   <button id="leave-btn">Leave room</button>
 </header>
 
@@ -523,9 +572,6 @@
       </div>
     </div>
 
-    <div class="live-indicator">
-      <div class="live-dot"></div>Live sync
-    </div>
   </div>
 </main>
 
@@ -543,6 +589,7 @@
     <input class="modal-input" type="text" id="drink-name-input" placeholder="Drink name (optional) — e.g. Bud Light" maxlength="40" autocomplete="off" />
     <div class="modal-actions">
       <button id="modal-log-btn">Log It 🍺</button>
+      <button id="modal-remove-btn">↩ Remove last <span id="modal-remove-label"></span></button>
       <button id="modal-cancel-btn">Cancel</button>
     </div>
   </div>
@@ -606,12 +653,15 @@
   const undoBar       = document.getElementById('undo-bar');
   const undoLabel     = document.getElementById('undo-label');
   const undoBtn       = document.getElementById('undo-btn');
-  const modal         = document.getElementById('drink-modal');
-  const modalEmoji    = document.getElementById('modal-emoji');
-  const modalTypeName = document.getElementById('modal-type-name');
-  const drinkNameInput= document.getElementById('drink-name-input');
-  const modalLogBtn   = document.getElementById('modal-log-btn');
-  const modalCancelBtn= document.getElementById('modal-cancel-btn');
+  const livePill       = document.getElementById('live-pill');
+  const modal          = document.getElementById('drink-modal');
+  const modalEmoji     = document.getElementById('modal-emoji');
+  const modalTypeName  = document.getElementById('modal-type-name');
+  const drinkNameInput = document.getElementById('drink-name-input');
+  const modalLogBtn    = document.getElementById('modal-log-btn');
+  const modalRemoveBtn = document.getElementById('modal-remove-btn');
+  const modalRemoveLbl = document.getElementById('modal-remove-label');
+  const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
   // ─── Session restore ────────────────────────────────────
   const saved = JSON.parse(sessionStorage.getItem('bachelorSession') || 'null');
@@ -662,6 +712,7 @@
     document.getElementById('greeting-name').textContent = currentName;
     document.getElementById('hero-room-code').textContent = currentRoom;
     leaveBtn.style.display = 'block';
+    livePill.classList.add('visible');
   }
 
   // ─── Leave ───────────────────────────────────────────────
@@ -674,6 +725,7 @@
     leaveBtn.style.display = 'none';
     currentRoom = currentName = playerRef = roomRef = feedRef = null;
     lastEntry = null; hideUndo();
+    livePill.classList.remove('visible');
     joinBtn.disabled = false; joinBtn.textContent = "Let's Go 🤙";
   });
 
@@ -696,6 +748,16 @@
       modalEmoji.textContent    = d.emoji;
       modalTypeName.textContent = d.label;
       drinkNameInput.value = '';
+
+      // Show remove button only if this drink type has a count > 0
+      const currentCount = parseInt(document.getElementById(`my-${pendingType}`).textContent) || 0;
+      if (currentCount > 0) {
+        modalRemoveLbl.textContent = `${d.emoji} ${d.label}`;
+        modalRemoveBtn.classList.add('visible');
+      } else {
+        modalRemoveBtn.classList.remove('visible');
+      }
+
       modal.classList.add('open');
       setTimeout(() => drinkNameInput.focus(), 300);
 
@@ -716,22 +778,61 @@
   modalCancelBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-  function closeModal() { modal.classList.remove('open'); pendingType = null; }
+  modalRemoveBtn.addEventListener('click', async () => {
+    if (!pendingType || !playerRef) return;
+    const type = pendingType;
+    closeModal();
 
-  function logDrink() {
+    // Decrement count (floor at 0)
+    playerRef.child(type).transaction(val => Math.max(0, (val || 0) - 1));
+
+    // Best-effort: remove the most recent feed entry for this player + type
+    feedRef.orderByChild('timestamp').limitToLast(30).once('value').then(snap => {
+      let targetKey = null;
+      let latestTs  = -1;
+      snap.forEach(child => {
+        const v = child.val();
+        if (v.player === currentName && v.type === type && v.timestamp > latestTs) {
+          latestTs  = v.timestamp;
+          targetKey = child.key;
+        }
+      });
+      if (targetKey) feedRef.child(targetKey).remove();
+    });
+  });
+
+  function closeModal() {
+    modal.classList.remove('open');
+    pendingType = null;
+    modalLogBtn.textContent = 'Log It 🍺';
+    modalLogBtn.disabled = false;
+    modalRemoveBtn.classList.remove('visible');
+  }
+
+  async function logDrink() {
     if (!pendingType || !playerRef) return;
     const type      = pendingType;
     const drinkName = drinkNameInput.value.trim();
+
+    // If a name was entered, try a nutrition lookup first
+    let nutrition = null;
+    if (drinkName) {
+      modalLogBtn.textContent = 'Looking up…';
+      modalLogBtn.disabled = true;
+      nutrition = await fetchNutrition(drinkName, type);
+    }
+
     closeModal();
 
     // 1. Increment count
     playerRef.child(type).transaction(val => (val || 0) + 1);
 
-    // 2. Post to feed
+    // 2. Post to feed (include nutrition if found)
     const ref = feedRef.push({
       player:    currentName,
       type,
       drinkName: drinkName || null,
+      nutrition: nutrition  || null,
       timestamp: firebase.database.ServerValue.TIMESTAMP
     });
 
@@ -740,6 +841,58 @@
     const d = DRINKS[type];
     undoLabel.textContent = `Logged ${d.emoji} ${drinkName ? `"${drinkName}"` : d.label}`;
     showUndo();
+  }
+
+  // ─── Open Food Facts lookup ──────────────────────────
+  // Default serving sizes (ml) per drink type for calorie math
+  const SERVING_ML = { beer: 355, seltzer: 355, mixed: 240, shot: 44 };
+
+  async function fetchNutrition(name, type) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+
+      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(name)}&search_simple=1&action=process&json=1&page_size=5&fields=product_name,nutriments,serving_size,serving_quantity`;
+      const res  = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
+
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data.products?.length) return null;
+
+      // Pick the first product that has calorie data; fall back to first result
+      const product = data.products.find(p => p.nutriments?.['energy-kcal_100g'] != null)
+                   || data.products[0];
+      if (!product) return null;
+
+      const n       = product.nutriments || {};
+      const cal100  = n['energy-kcal_100g'];   // kcal per 100 ml
+      const abv100  = n['alcohol_100g'];        // % by weight ≈ ABV for display
+
+      // Calories: prefer per-serving value, otherwise estimate from serving size
+      let calories = null;
+      if (n['energy-kcal_serving'] != null) {
+        calories = Math.round(n['energy-kcal_serving']);
+      } else if (cal100 != null) {
+        // Try to parse a numeric serving quantity from the product, fall back to type default
+        const servQty = parseFloat(product.serving_quantity) || SERVING_ML[type] || 355;
+        calories = Math.round(cal100 * (servQty / 100));
+      }
+
+      const abv = abv100 != null ? parseFloat(abv100).toFixed(1) : null;
+
+      // Only return something useful if we got at least one data point
+      if (calories == null && abv == null) return null;
+
+      return {
+        calories,
+        abv,
+        servingSize: product.serving_size || null,
+      };
+    } catch (e) {
+      // Timeout or network error — fail silently
+      return null;
+    }
   }
 
   // ─── Undo ────────────────────────────────────────────────
@@ -842,6 +995,19 @@
       const ago   = timeAgo(item.timestamp);
       const nameEl= `<span class="feed-drink-label" style="color:${typeColor(item.type)}">${d.emoji} ${d.label}</span>`;
       const nameQuote = item.drinkName ? `<div class="feed-drink-name">${esc(item.drinkName)}</div>` : '';
+
+      // Nutrition chip
+      let nutritionEl = '';
+      if (item.nutrition) {
+        const parts = [];
+        if (item.nutrition.calories != null) parts.push(`🔥 ${item.nutrition.calories} cal`);
+        if (item.nutrition.abv      != null) parts.push(`🍷 ${item.nutrition.abv}% ABV`);
+        if (item.nutrition.servingSize)       parts.push(item.nutrition.servingSize);
+        if (parts.length) {
+          nutritionEl = `<div class="feed-nutrition">${parts.map((p,i) => i===0 ? esc(p) : `<span class="feed-nutrition-dot">·</span>${esc(p)}`).join('')}</div>`;
+        }
+      }
+
       return `
         <div class="feed-item">
           <div class="feed-avatar" style="background:${color}">${initials(item.player)}</div>
@@ -851,6 +1017,7 @@
               <span class="feed-verb"> had a </span>${nameEl}
             </div>
             ${nameQuote}
+            ${nutritionEl}
             <div class="feed-time">${ago}</div>
           </div>
         </div>`;
